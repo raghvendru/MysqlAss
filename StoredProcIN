@@ -1,0 +1,147 @@
+create database sps;
+use sps;
+
+CREATE TABLE employees (
+    id INT PRIMARY KEY,
+    ename VARCHAR(50),
+    sal DECIMAL(10,2),
+    deptId INT
+);
+
+
+INSERT INTO employees VALUES
+(1, 'Alice', 50000, 10),
+(2, 'Bob', 60000, 20),
+(3, 'Charlie', 70000, 10),
+(4, 'David', 55000, 30),
+(5, 'Eva', 65000, 20);
+
+
+
+-- Table
+CREATE TABLE orders (
+    orderId INT PRIMARY KEY,
+    ordname VARCHAR(50),
+    customer_id INT
+);
+
+-- Dummy Data
+INSERT INTO orders VALUES
+(101, 'Laptop', 1),
+(102, 'Mobile', 2),
+(103, 'Keyboard', 1),
+(104, 'Monitor', 3),
+(105, 'Mouse', 2);
+
+
+
+
+
+
+CREATE TABLE students (
+    student_id INT PRIMARY KEY,
+    sname VARCHAR(50),
+    marks INT
+);
+
+-- Dummy Data
+INSERT INTO students VALUES
+(301, 'Ravi', 85),
+(302, 'Meena', 72),
+(303, 'Arun', 55),
+(304, 'Sita', 40),
+(305, 'Kiran', 92);
+
+CREATE TABLE products (
+    product_id INT PRIMARY KEY,
+    pname VARCHAR(50),
+    stock_qty INT
+);
+
+-- Dummy Data
+INSERT INTO products VALUES
+(201, 'Laptop', 10),
+(202, 'Mobile', 20),
+(203, 'Keyboard', 50),
+(204, 'Mouse', 100),
+(205, 'Monitor', 15);
+
+-- 1. Write a stored procedure that accepts an employee_id and displays the employee’s
+-- name and salary from the employees table.
+DELIMITER //
+CREATE PROCEDURE empDet(IN eid INT)
+BEGIN
+    SELECT ename, sal 
+    FROM employees 
+    WHERE id = eid;
+END //
+DELIMITER ;
+
+
+CALL empDet(5);
+
+-- 2. Write a stored procedure that accepts a department_id and displays the count of
+-- employees in that department from the employees table.
+-- Procedure
+DELIMITER //
+CREATE PROCEDURE CountDep(IN did INT)
+BEGIN
+    SELECT deptId, COUNT(*) AS empCount 
+    FROM employees 
+    WHERE deptId = did 
+    GROUP BY deptId;
+END //
+DELIMITER ;
+
+
+CALL CountDep(20);
+
+
+-- 3. Write a stored procedure that accepts a customer_id and displays all orders placed
+-- by that customer from the orders table.
+DELIMITER //
+CREATE PROCEDURE orderDet(IN cid INT)
+BEGIN
+    SELECT orderId, ordname 
+    FROM orders 
+    WHERE customer_id = cid;
+END //
+DELIMITER ;
+
+CALL orderDet(1);
+
+
+-- 4. Write a stored procedure that accepts a product_id and displays the product name
+-- and current stock quantity from the products table.
+DELIMITER //
+CREATE PROCEDURE prodStock(IN pid INT)
+BEGIN
+    SELECT pname, stock_qty 
+    FROM products 
+    WHERE product_id = pid;
+END //
+DELIMITER ;
+
+CALL prodStock(203);
+
+
+-- 5. Write a stored procedure that accepts a student_id and displays the student’s marks
+-- and grade from the students table.
+DELIMITER //
+CREATE PROCEDURE studentGrade(IN sid INT)
+BEGIN
+    SELECT sname, marks,
+           CASE 
+               WHEN marks >= 85 THEN 'A'
+               WHEN marks >= 70 THEN 'B'
+               WHEN marks >= 50 THEN 'C'
+               ELSE 'D'
+           END AS grade
+    FROM students
+    WHERE student_id = sid;
+END //
+DELIMITER ;
+
+-- Call
+CALL studentGrade(305);
+
