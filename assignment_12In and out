@@ -1,0 +1,152 @@
+CREATE DATABASE school;
+use school;
+
+CREATE TABLE students (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(50),
+    age INT,
+    course VARCHAR(50),
+    marks INT
+);
+INSERT INTO students (name, age, course, marks) VALUES
+('Alice', 20, 'Computer Science', 92),
+('Bob', 21, 'Electronics', 78),
+('Charlie', 22, 'Mechanical', 65),
+('David', 20, 'Electrical', 50),
+('Eva', 23, 'Civil', 88),
+('Frank', 21, 'Computer Science', 73),
+('Grace', 22, 'Electronics', 81),
+('Helen', 20, 'Mechanical', 55),
+('Ian', 21, 'Civil', 60),
+('Jane', 22, 'Computer Science', 95);
+
+-- 5 Problem Statements using SELECT INTO with IN Parameter
+-- 1.	Write a procedure that accepts a student name as input and retrieves the marks of that student using SELECT INTO and display the retrieved marks.
+
+delimiter //
+drop procedure if exists retrMarks //
+create procedure retrMarks(in Sname varchar(20))
+begin
+declare Smark int ;
+select marks into Smark from students where name = Sname limit 1;
+select concat('Student mark is ',Smark) as result;
+
+end//
+delimiter ;
+
+call retrMarks('David');
+
+
+
+-- 2.	Write a procedure that accepts a course ID as input and retrieves the course name using SELECT INTO and display the retrieved course name.
+
+delimiter //
+drop procedure if exists dispCourseName //
+create procedure dispCourseName(in Sid int)
+begin
+declare Scourse varchar(20);
+select course into Scourse from students where id = Sid;
+select concat('Course is ',Scourse) as course;
+end//
+delimiter ;
+
+call dispCourseName(5);
+
+-- 3.	Write a procedure that accepts a student name as input and retrieves the student ID using SELECT INTO and display the retrieved student ID.
+delimiter //
+drop procedure if exists retIdByName //
+create procedure retIdByName(in Sname varchar(20))
+begin
+declare SId int ;
+select id into SId from students where name = Sname limit 1;
+select concat('Student id is ',SId) as result;
+
+end//
+delimiter ;
+
+call retIdByName('David');
+
+-- 4.	Write a procedure that accepts a student ID as input and retrieves the average marks of that student using SELECT INTO and display the retrieved average marks.
+delimiter //
+drop procedure if exists svgMarks //
+create procedure svgMarks(in Sid int)
+begin
+declare Smark decimal(10,2);
+select  avg(marks) into Smark from students where id = Sid;
+select concat('average marks is ',Smark);
+end //
+delimiter ;
+call svgMarks(5) ;
+
+-- 5.	Write a procedure that accepts a student name as input and retrieves the course of that student using SELECT INTO and display the retrieved course.
+delimiter //
+drop procedure if exists getCourbyName //
+create procedure getCourbyName(in Sname varchar(20)) 
+begin
+declare Sco varchar(20);
+select course into Sco from students where name  = Sname limit 1;
+select concat('course name is ',Sco) as course;
+end //
+delimiter ;
+call getCourbyName('Grace');
+
+-- OUT=====>
+-- 1.	Write a procedure that retrieves the name of the topper student (highest marks) into an OUT parameter using SELECT INTO and display the retrieved name.
+delimiter //
+drop procedure if exists top //
+create procedure top(out Sname varchar(20))
+begin
+select name  into Sname from students where marks = (select max(marks) from students )limit 1;
+end //
+delimiter ;
+call top(@sMarks);
+select @sMarks as topper;
+
+
+-- 2.	Write a procedure that retrieves the lowest marks scored by any student into an OUT parameter using SELECT INTO and display the retrieved marks.
+delimiter //
+drop procedure if exists lowMark //
+create procedure lowMark(out mark int)
+begin
+select min(marks)  into mark from students ;
+end //
+delimiter ;
+call lowMark(@lowm);
+select @lowm as low;
+
+
+-- 3.	Write a procedure that retrieves the total number of students into an OUT parameter using SELECT INTO and display the retrieved count.
+SELECT * FROM students;
+SELECT COUNT(*) FROM students;
+
+delimiter //
+drop procedure if exists totStud //
+create procedure totStud(out tot int)
+begin
+select count(*) into tot from students;
+end //
+delimiter ;
+call totStud(@totSt);
+select @totSt as totStud;
+
+-- 4.	Write a procedure that retrieves the overall average marks of all students into an OUT parameter using SELECT INTO and display the retrieved average marks.
+delimiter //
+drop procedure if exists avgSt//
+create procedure avgSt(out cnt decimal(5,2))
+begin
+select avg(marks) into cnt from students;
+end //
+delimiter ;
+call avgSt(@avgStudent);
+select @avgStudent as average;
+
+-- 5.	Write a procedure that accepts a student ID as input and retrieves the course name of that student into an OUT parameter using SELECT INTO and display the retrieved course name.
+delimiter //
+drop procedure if exists getCou //
+create procedure getCou(in Sid int,out Sname varchar(20))
+begin
+select course into Sname from students where id = Sid;
+end //
+delimiter ;
+call getCou(5,@course);
+select @course as course;
