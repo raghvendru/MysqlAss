@@ -1,0 +1,65 @@
+delimiter //
+drop function if exists getPrice//
+create function getPrice(Sid int)
+returns int
+DETERMINISTIC
+begin
+declare Pmarks int;
+select marks into pMarks from students where id = Sid;
+return pMarks;
+end//
+delimiter //
+select getPrice(5);
+
+
+
+delimiter //
+drop procedure if exists getListStud//
+create procedure getListStud()
+begin
+declare Sid int;
+declare Sname varchar(20);
+declare Sage int;
+declare Scourse varchar(20);
+declare done int default 0;
+declare c1 cursor for select id,name,age,course from students;
+declare continue handler for not found set done = 1 ;
+open c1;
+read_stu : loop
+fetch c1 into Sid,Sname,Sage,Scourse ;
+if(done = 1) then 
+leave read_stu;
+end if;
+select concat('list of students are : ' ,Sid,Sname,Sage,Scourse) as students;
+end loop;
+close c1;
+end //
+delimiter ;
+
+call getListStud () ;
+
+describe students;
+delimiter //
+drop procedure getStD//
+create procedure getStD()
+begin
+declare Sid int;
+declare Sage int;
+declare Sname varchar(20);
+declare Scourse varchar(20);
+declare done int default 0;
+declare c1 cursor for select id,age,name,course from students;
+declare continue handler for not found set done = 1; 
+open c1;
+stud_det : loop
+fetch c1 into Sid, Sage,Sname,Scourse ;
+if(done = 1) then 
+leave stud_det;
+end if;
+select concat('stud det are ',Sid,' ',Sname,' ' ,Sage,' ',Scourse);
+end loop;
+close c1;
+end//
+delimiter ;
+
+call getStD();
