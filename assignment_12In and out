@@ -150,3 +150,17 @@ end //
 delimiter ;
 call getCou(5,@course);
 select @course as course;
+
+
+
+
+delimiter //
+drop procedure if exists getName//
+create procedure getName (inout value int)
+begin 
+select age into value from students where id = value;
+end //
+delimiter ;
+set @value =5;
+call getName(@value);
+select @value;
