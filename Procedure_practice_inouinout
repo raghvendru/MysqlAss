@@ -1,0 +1,183 @@
+create database practiceDb;
+
+use practiceDb;
+
+-- 1. Employees Table
+CREATE TABLE employees (
+    emp_id INT AUTO_INCREMENT PRIMARY KEY,
+    emp_name VARCHAR(50),
+    department VARCHAR(50),
+    salary DECIMAL(10,2)
+);
+
+INSERT INTO employees (emp_name, department, salary) VALUES
+('Alice', 'HR', 45000),
+('Bob', 'IT', 60000),
+('Charlie', 'Finance', 52000),
+('David', 'IT', 70000),
+('Eva', 'HR', 48000);
+
+-- 2. Students Table
+CREATE TABLE students (
+    stu_id INT AUTO_INCREMENT PRIMARY KEY,
+    stu_name VARCHAR(50),
+    marks INT
+);
+
+INSERT INTO students (stu_name, marks) VALUES
+('Ravi', 85),
+('Sneha', 45),
+('Arjun', 72),
+('Meena', 33),
+('Kiran', 90);
+
+-- 3. Products Table
+CREATE TABLE products (
+    prod_id INT AUTO_INCREMENT PRIMARY KEY,
+    prod_name VARCHAR(50),
+    price DECIMAL(10,2),
+    stock INT
+);
+
+INSERT INTO products (prod_name, price, stock) VALUES
+('Laptop', 55000, 12),
+('Mobile', 15000, 30),
+('Tablet', 22000, 15),
+('Headphones', 2000, 50),
+('Smartwatch', 7000, 25);
+
+
+-- 🔹 IN Examples
+
+-- Employee Salary Check
+-- Input: Employee ID (IN) → Show employee name and salary.
+-- (Uses employees table)
+delimiter //
+drop procedure if exists showEmpName//
+create procedure showEmpName(in Eid int)
+begin
+declare Sname varchar(20);
+declare Sal decimal(10,2);
+select emp_name,salary into Sname,Sal from employees where emp_id = EId;
+select Sname,Sal;
+end //
+delimiter ;
+call showEmpName(5);
+
+
+-- Factorial Calculation
+-- Input: Number (IN) → Print factorial.
+-- (Doesn’t need table)
+delimiter //
+drop procedure if exists fact//
+create procedure fact(in n int)
+begin 
+declare i int default 1;
+declare fact int default 1;
+  while i<=n do set fact =fact*i;
+  set i = i+1;
+  end while;
+  select fact;
+end //
+delimiter ;
+call fact(5);
+-- Student Result
+-- Input: Student ID (IN) → Show Pass/Fail (marks ≥ 40 is Pass).
+-- (Uses students table)
+
+delimiter //
+drop procedure if exists res//
+create procedure res(in sid int)
+begin
+declare smarks int ;
+select marks into smarks from students where stu_id = sid;
+select if(smarks < 40,"fail",'pass');
+end//
+delimiter ;
+call res(4);
+
+-- 🔹 OUT Examples
+
+-- Find Highest Marks
+-- Output: Max marks from students (OUT).
+-- (Uses students table)
+delimiter //
+drop procedure if  exists markOut//
+create procedure markOut(out Smarks decimal(10,2))
+begin
+select max(marks) into Smarks from students ;
+end //
+delimiter ;
+call markOut(@Smarks);
+select @Smarks;
+-- Count Employees in Department
+-- Input: Department (IN), Output: Count (OUT).
+-- (Uses employees table)
+delimiter //
+drop procedure if exists cou//
+create procedure cou(in dName varchar(20) ,out co int)
+begin 
+select count(*) into co from employees where department =dName;
+end //
+delimiter ;
+call cou('HR',@abc);
+select @abc;
+
+-- Average Salary
+-- Output: Avg salary (OUT).
+-- (Uses employees table)
+
+delimiter //
+drop procedure if exists av //
+create procedure av(out av decimal(10,2))
+begin
+select avg(salary) into av from employees; 
+end //
+delimiter ;
+call av(@xy);
+select @xy;
+-- 🔹 INOUT Examples
+
+-- Increment Salary
+-- Input: Salary (INOUT) → Increase by 10%.
+-- (Uses employees table for realistic testing)
+delimiter //
+drop procedure if exists inc //
+create procedure inc(inout incr int)
+begin
+
+select salary into incr from employees where emp_id = incr;
+ set incr = incr * 1.1;
+end //
+delimiter ;
+set @ac = 1;
+call inc(@ac);
+select (@ac);
+-- Square a Number
+-- Input: Number (INOUT) → Replace with its square.
+-- (No table needed)
+delimiter //
+drop procedure if exists sq//
+create procedure sq(inout n int)
+begin
+set n = n*n;
+end //
+delimiter ;
+set @sqp = 5;
+call sq(@sqp);
+select @sqp;
+-- Append Suffix to Product Name
+-- Input: Product name (INOUT) → Append "_DONE".
+-- (Uses products table)
+delimiter //
+drop procedure if exists pNm //
+create procedure pNm(inout app varchar(20))
+begin
+select concat(prod_name,'_DONE') into app from products where prod_name = app group by prod_name;
+end //
+delimiter ;
+
+set @ee = 'Headphones';
+call pNm(@ee);
+select @ee;
+
