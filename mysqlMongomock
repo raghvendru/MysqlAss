@@ -1,0 +1,133 @@
+db.createCollection('company')
+{ ok: 1 }
+use 'company'
+switched to db 'company'
+db.company.insertMany([{name:'andrew',company;'quash',type:'Client'},{name:'david',comapany:'newage',type:'potential'},{name:'json',company:'tetra',type:'customer'},{name:'mark',company:'',type:'client'},{name:'marwin',company:'quash',type:'potential'},{name:'daniel',company:'newage',type:''}]);
+SyntaxError: Unexpected token, expected "," (1:45)
+
+[0m[31m[1m>[22m[39m[90m 1 |[39m db[33m.[39mcompany[33m.[39minsertMany([{name[33m:[39m[32m'andrew'[39m[33m,[39mcompany[33m;[39m[32m'quash'[39m[33m,[39mtype[33m:[39m[32m'Client'[39m}[33m,[39m{name[33m:[39m[32m'david'[39m[33m,[39mcomapany[33m:[39m[32m'newage'[39m[33m,[39mtype[33m:[39m[32m'potential'[39m}[33m,[39m{name[33m:[39m[32m'json'[39m[33m,[39mcompany[33m:[39m[32m'tetra'[39m[33m,[39mtype[33m:[39m[32m'customer'[39m}[33m,[39m{name[33m:[39m[32m'mark'[39m[33m,[39mcompany[33m:[39m[32m''[39m[33m,[39mtype[33m:[39m[32m'client'[39m}[33m,[39m{name[33m:[39m[32m'marwin'[39m[33m,[39mcompany[33m:[39m[32m'quash'[39m[33m,[39mtype[33m:[39m[32m'potential'[39m}[33m,[39m{name[33m:[39m[32m'daniel'[39m[33m,[39mcompany[33m:[39m[32m'newage'[39m[33m,[39mtype[33m:[39m[32m''[39m}])[33m;[39m
+ [90m   |[39m                                              [31m[1m^[22m[39m[0m
+db.company.insertMany([{name:'andrew',company:'quash',type:'Client'},{name:'david',comapany:'newage',type:'potential'},{name:'json',company:'tetra',type:'customer'},{name:'mark',company:'',type:'client'},{name:'marwin',company:'quash',type:'potential'},{name:'daniel',company:'newage',type:''}]);
+{
+  acknowledged: true,
+  insertedIds: {
+    '0': ObjectId('68d62355419a236db858a6e6'),
+    '1': ObjectId('68d62355419a236db858a6e7'),
+    '2': ObjectId('68d62355419a236db858a6e8'),
+    '3': ObjectId('68d62355419a236db858a6e9'),
+    '4': ObjectId('68d62355419a236db858a6ea'),
+    '5': ObjectId('68d62355419a236db858a6eb')
+  }
+}
+db.company.get().pretty;
+TypeError: db.company.get is not a function
+db.company.get().pretty();
+TypeError: db.company.get is not a function
+db.company.find().pretty();
+{
+  _id: ObjectId('68d62355419a236db858a6e6'),
+  name: 'andrew',
+  company: 'quash',
+  type: 'Client'
+}
+{
+  _id: ObjectId('68d62355419a236db858a6e7'),
+  name: 'david',
+  comapany: 'newage',
+  type: 'potential'
+}
+{
+  _id: ObjectId('68d62355419a236db858a6e8'),
+  name: 'json',
+  company: 'tetra',
+  type: 'customer'
+}
+{
+  _id: ObjectId('68d62355419a236db858a6e9'),
+  name: 'mark',
+  company: '',
+  type: 'client'
+}
+{
+  _id: ObjectId('68d62355419a236db858a6ea'),
+  name: 'marwin',
+  company: 'quash',
+  type: 'potential'
+}
+{
+  _id: ObjectId('68d62355419a236db858a6eb'),
+  name: 'daniel',
+  company: 'newage',
+  type: ''
+}
+db.find(),skip(1).limit(3);
+TypeError: db.find is not a function
+db.company.find(),skip(1).limit(3);
+ReferenceError: skip is not defined
+db.company.find(),skip(1);
+ReferenceError: skip is not defined
+db.company.find().skip(1).limit(3);
+{
+  _id: ObjectId('68d62355419a236db858a6e7'),
+  name: 'david',
+  comapany: 'newage',
+  type: 'potential'
+}
+{
+  _id: ObjectId('68d62355419a236db858a6e8'),
+  name: 'json',
+  company: 'tetra',
+  type: 'customer'
+}
+{
+  _id: ObjectId('68d62355419a236db858a6e9'),
+  name: 'mark',
+  company: '',
+  type: 'client'
+}
+db.company.deleteOne({name:'json'});
+{
+  acknowledged: true,
+  deletedCount: 1
+}
+db.company.find().pretty();
+{
+  _id: ObjectId('68d62355419a236db858a6e6'),
+  name: 'andrew',
+  company: 'quash',
+  type: 'Client'
+}
+{
+  _id: ObjectId('68d62355419a236db858a6e7'),
+  name: 'david',
+  comapany: 'newage',
+  type: 'potential'
+}
+{
+  _id: ObjectId('68d62355419a236db858a6e9'),
+  name: 'mark',
+  company: '',
+  type: 'client'
+}
+{
+  _id: ObjectId('68d62355419a236db858a6ea'),
+  name: 'marwin',
+  company: 'quash',
+  type: 'potential'
+}
+{
+  _id: ObjectId('68d62355419a236db858a6eb'),
+  name: 'daniel',
+  company: 'newage',
+  type: ''
+}
+db.company.deleteMany();
+MongoshInvalidInputError: [COMMON-10001] Missing required argument at position 0 (Collection.deleteMany)
+db.company.deleteMany({});
+{
+  acknowledged: true,
+  deletedCount: 5
+}
+db.company.find().pretty();
+'company'
+
