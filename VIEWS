@@ -1,0 +1,39 @@
+VIEWS
+
+Virtual table based on the result-set of  SQL statement and that is Stored in the database with some name. 
+A view can contain all rows of a table or select rows from a table. 
+A view can be created from one or many tables which depends on the written SQL query to create a view.
+Restrict access to the data such that a user can see and (sometimes) modify exactly what they need and no more.
+Summarize data from various tables which can be used to generate reports.
+If table structure is changed  then the view definition also has to be changed.
+Simple View
+A view based on only a single table, which doesn't contain GROUP BY clause and any functions.
+Complex View
+A view based on multiple tables, which contain GROUP BY clause and functions.
+Inline View
+ A view based on a subquery in FROM Clause, that subquery creates a temporary table and simplifies the complex query.
+Materialized View
+ A view that stores the definition as well as data. It creates replicas of data by storing it physically.
+
+create view empage(empcode,age) 
+as (select empcode, timestampdiff(year,birthdate,curdate()) 
+from emp);
+
+CREATE VIEW EMPPAY (EmpCode, NetPay,                                             SalMonth) AS
+     ( SELECT	     EmpCode, 
+                           (Basic + Allow - Deduct), SalMonth
+       FROM    Salary );
+
+
+CREATE VIEW DeptEmpCount 
+		(DeptCode, DeptEmpCount) AS
+(SELECT	DeptCode, count(*)
+FROM		Emp
+GROUP BY   DeptCode);
+
+
+alter view emppay(empcode,netpay,salmonth) 
+as (select empcode, (basic+allow-deduct)+1000,salmonth from salary);
+DROP VIEW EMPPAY;
+
+
