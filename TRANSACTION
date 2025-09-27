@@ -1,0 +1,52 @@
+-- 1. Create table with InnoDB engine
+CREATE TABLE course (
+    course_id INT PRIMARY KEY,
+    course_name VARCHAR(20)
+) ENGINE = InnoDB;
+
+-- 2. Start a transaction
+START TRANSACTION;
+
+-- Insert records
+INSERT INTO course VALUES
+(1, 'DBT'),
+(2, 'OS'),
+(3, 'JAVA'),
+(4, 'Data structure');
+
+-- 3. Create savepoint after insertion
+SAVEPOINT insertion;
+
+-- 4. Delete DBT and OS
+DELETE FROM course WHERE course_name IN ('DBT', 'OS');
+
+-- 5. Create savepoint after deletion
+SAVEPOINT deletion;
+
+-- 6. Rollback to deletion (no visible change, already there)
+ROLLBACK TO deletion;
+
+-- 7. Insert Algorithms
+INSERT INTO course VALUES (5, 'Algorithms');
+
+-- 8. Rollback to insertion (DBT + OS restored, Algorithms removed)
+ROLLBACK TO insertion;
+
+-- 9. Full rollback (everything undone, table empty)
+ROLLBACK;
+
+
+
+Execution flow with results
+
+After step 2 → DBT, OS, JAVA, Data structure
+
+After step 4 → JAVA, Data structure
+
+After step 6 → Still JAVA, Data structure
+
+After step 7 → JAVA, Data Structure, Algorithms
+
+After step 8 → DBT, OS, JAVA, Data structure
+
+After step 9 → Table empty
