@@ -1,0 +1,20 @@
+CREATE INDEX index_name ON tbl_name (index_columns);
+CREATE UNIQUE INDEX index_name ON tbl_name (index_columns);
+To drop an index, use either a DROP INDEX or an ALTER TABLE statement.
+DROP INDEX index_name  ON tbl_name; 
+ALTER TABLE tbl_name DROP INDEX index_name; 
+Show index
+show index from emp \G;
+INDEX, you must name the index to be dropped:
+DROP INDEX index_name ON tbl_name;
+multiple indexes can not be created with a single statement.
+
+
+TEMPORARY
+If you add the TEMPORARY keyword to a table-creation statement, the server creates a temporary table that disappears automatically when your connection to the server terminates 
+DROP TABLE statement is not needed to getrid of the table
+A TEMPORARY table is visible only to the client that creates the table.
+ Different clients can each create a TEMPORARY table with the same name and without conflict because eachclient sees only the table that it created. 
+Deprecated as of MySQL 8.0.13; expect it to be removed in future version
+CREATE TEMPORARY TABLE tbl_name;
+DROP TEMPORARY TABLE tbl_name 
