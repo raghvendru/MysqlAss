@@ -1,0 +1,134 @@
+-- ==============================================
+-- PROBLEM STATEMENT
+-- ==============================================
+-- 1. Create a trigger AFTER INSERT on emp table to allow insertion 
+--    only if join_date is not older than 40 years.
+-- 2. Insert a value to activate the trigger check.
+-- 3. Create a table average_age, and insert the average age of employees into this table.
+-- 4. Create an AFTER INSERT trigger on emp to update average_age after insert.
+-- 5. Insert a value to activate the trigger check.
+-- 6. Add a BEFORE UPDATE trigger on emp to ensure age > 18 before update.
+-- 7. Update a record to test this trigger.
+-- 8. Create a table emp_archive with same columns as emp.
+-- 9. Insert a new record into emp (not existing already).
+-- 10. Create a BEFORE DELETE trigger on emp to archive deleted rows into emp_archive.
+-- 11. Delete the record inserted in step 9.
+-- 12. Display emp_archive to verify trigger worked.
+-- 13. Create an AFTER DELETE trigger on emp to update average_age after delete.
+-- 14. Delete a record to check this trigger.
+-- ==============================================
+
+-- Create emp table
+CREATE TABLE emp (
+    emp_id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(50),
+    age INT,
+    join_date DATE
+);
+
+-- Trigger 1: BEFORE INSERT -> check join_date not older than 40 years
+DELIMITER //
+CREATE TRIGGER trg_emp_before_insert
+BEFORE INSERT ON emp
+FOR EACH ROW
+BEGIN
+    IF NEW.join_date < DATE_SUB(CURDATE(), INTERVAL 40 YEAR) THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'Join date cannot be older than 40 years';
+    END IF;
+END;
+//
+DELIMITER ;
+
+-- Insert test data (activates trigger check)
+INSERT INTO emp (name, age, join_date) VALUES ('Raghav', 30, '2020-05-10');
+
+-- Create average_age table
+CREATE TABLE average_age (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    avg_age DECIMAL(5,2)
+);
+
+-- Trigger 2: AFTER INSERT -> update average_age
+DELIMITER //
+CREATE TRIGGER trg_emp_after_insert
+AFTER INSERT ON emp
+FOR EACH ROW
+BEGIN
+    DECLARE avgVal DECIMAL(5,2);
+    SELECT AVG(age) INTO avgVal FROM emp;
+    DELETE FROM average_age;
+    INSERT INTO average_age (avg_age) VALUES (avgVal);
+END;
+//
+DELIMITER ;
+
+-- Insert more data (activates avg_age update)
+INSERT INTO emp (name, age, join_date) VALUES ('Nikhil', 25, '2023-08-15');
+
+-- Trigger 3: BEFORE UPDATE -> check age > 18
+DELIMITER //
+CREATE TRIGGER trg_emp_before_update
+BEFORE UPDATE ON emp
+FOR EACH ROW
+BEGIN
+    IF NEW.age <= 18 THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'Age must be greater than 18';
+    END IF;
+END;
+//
+DELIMITER ;
+
+-- Test updates
+-- UPDATE emp SET age = 17 WHERE emp_id = 1; -- should fail
+-- UPDATE emp SET age = 35 WHERE emp_id = 1; -- should succeed
+
+-- Create emp_archive table
+CREATE TABLE emp_archive (
+    emp_id INT,
+    name VARCHAR(50),
+    age INT,
+    join_date DATE
+);
+
+-- Insert new record (for delete test)
+INSERT INTO emp (name, age, join_date) VALUES ('TestUser', 29, '2022-04-01');
+
+-- Trigger 4: BEFORE DELETE -> move record to emp_archive
+DELIMITER //
+CREATE TRIGGER trg_emp_before_delete
+BEFORE DELETE ON emp
+FOR EACH ROW
+BEGIN
+    INSERT INTO emp_archive (emp_id, name, age, join_date)
+    VALUES (OLD.emp_id, OLD.name, OLD.age, OLD.join_date);
+END;
+//
+DELIMITER ;
+
+-- Delete record to activate archive trigger
+DELETE FROM emp WHERE name = 'TestUser';
+
+-- Check emp_archive
+SELECT * FROM emp_archive;
+
+-- Trigger 5: AFTER DELETE -> update average_age
+DELIMITER //
+CREATE TRIGGER trg_emp_after_delete
+AFTER DELETE ON emp
+FOR EACH ROW
+BEGIN
+    DECLARE avgVal DECIMAL(5,2);
+    SELECT AVG(age) INTO avgVal FROM emp;
+    DELETE FROM average_age;
+    INSERT INTO average_age (avg_age) VALUES (avgVal);
+END;
+//
+DELIMITER ;
+
+-- Delete record to check avg_age update
+DELETE FROM emp WHERE emp_id = 1;
+
+-- Check average_age after delete
+SELECT * FROM average_age;
