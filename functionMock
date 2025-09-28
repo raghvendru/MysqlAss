@@ -1,0 +1,117 @@
+
+create database dummy_fun;
+use dummy_fun;
+
+-- Department table
+create table dept (
+    deptId int primary key,
+    deptName varchar(50),
+    location varchar(50)
+);
+
+insert into dept values
+(101,'IT','Bangalore'),
+(102,'Finance','Mumbai'),
+(103,'HR','Delhi'),
+(104,'Analytics','Hyderabad');
+
+-- Employee table
+create table employees (
+    empId int auto_increment primary key,
+    name varchar(50),
+    deptId int,
+    job_title varchar(50),
+    sal int,
+    hire_date date,
+    foreign key (deptId) references dept(deptId)
+);
+
+insert into employees(name,deptId,job_title,sal,hire_date) values
+('Alice',101,'Software Engineer',70000,'2017-05-10'),
+('Bob',101,'Senior Dev',60000,'2018-07-15'),
+('Charlie',102,'Finance Exec',45000,'2019-03-20'),
+('David',103,'HR Manager',55000,'2016-11-25'),
+('Eve',104,'Data Analyst',80000,'2020-02-10');
+
+
+
+
+-- Write a stored function to return the annual salary of an employee when the employee ID is given.
+delimiter //
+drop function if exists anuSal//
+create function anuSal(empId int)
+returns int
+deterministic
+begin
+declare Esal int;
+select distinct sal into Esal from employees where empid = empId limit 1;
+return Esal*12;
+end //
+delimiter ;
+select anuSal(2);
+
+-- Write a stored function to find the experience of an employee (in years) from the hire date, when the employee ID is given.
+delimiter //
+drop function if exists expE//
+create function expE(empId int)
+returns int
+deterministic
+begin
+declare Eexp int;
+select timestampdiff(year,hire_date,curdate()) into Eexp from employees where empid = empId limit 1;
+return Eexp;
+end //
+delimiter //
+
+select expE(1);
+-- Write a stored function to return the department name when the employee ID is given.
+delimiter //
+drop function if exists depN //
+create function depN( Eid int)
+returns varchar(20)
+deterministic
+begin
+declare Dname varchar(20);
+select  d.deptname into Dname
+from Employees e inner join dept d on e.deptId = d.deptId
+where e.empid = eid;
+return Dname;
+end//
+delimiter //
+select depN(1);
+-- Write a stored function to return the number of employees in a particular department, when the department ID is given.
+delimiter //
+drop function if exists noOfEmp //
+create function noOfEmp( pDid int)
+returns int
+deterministic
+begin
+declare num int;
+select count(empId) into num
+from employees where deptid = pDid;
+return num;
+end//
+delimiter //
+select noOfEmp(101)
+-- Write a stored function to return the bonus amount for an employee based on their salary (e.g., 10% of salary if salary < 50,000, otherwise 5%).
+delimiter //
+drop function if exists bon//
+create function bon( Eid int)
+returns int
+deterministic
+begin
+declare Eb int;
+select sal into Eb from employees where empid = Eid;
+if Eb<50000 then set Eb = Eb*1.1;
+else set Eb = Eb*0.05;
+end if;
+return Eb;
+end//
+delimiter //
+select bon(1);
+
+
+
+
+
+
