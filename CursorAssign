@@ -1,0 +1,136 @@
+
+
+use dummy_sql;
+
+CREATE TABLE Students (
+    StudentID INT PRIMARY KEY,
+    Name VARCHAR(50),
+    Marks INT
+);
+
+INSERT INTO Students VALUES
+(101, 'Ravi', 85),
+(102, 'Priya', 72),
+(103, 'Karan', 55),
+(104, 'Meera', 40),
+(105, 'Anita', 30);
+-- Cursor Logic:
+-- Use a cursor to loop through each student’s marks.
+-- Assign grade as per logic:
+-- Marks ≥ 80 → Grade 'A'
+-- Marks between 60–79 → Grade 'B'
+-- Marks between 40–59 → Grade 'C'
+-- Marks < 40 → Grade 'Fail
+-- Print student name with assigned grade.
+
+delimiter //
+drop procedure if exists stuMarks //
+create procedure stuMarks()
+begin
+declare done int default 0 ;
+declare Smar int ;
+declare Sres varchar(20);
+declare c1 cursor for select marks from students ;
+declare continue handler for not found set done = 1;
+open c1;
+stu_det:loop
+fetch c1 into Smar;
+if(done = 1) then
+leave stu_det;
+end if;
+if(Smar >= 80) then set Sres = 'A';
+elseif Smar between  60 and 79 then set Sres = 'B';
+elseif Smar between  40 and 59 then set Sres = 'C';
+else set Sres =  'Fail';
+end if;
+        select Smar as Marks, Sres as Result;
+end loop ;
+close c1;
+end //
+delimiter ;
+
+call stuMarks();
+
+
+
+
+delimiter //
+drop procedure if exists getStudentsByCourse //
+create procedure getStudentsByCourse(IN courseName varchar(50))
+begin
+    declare done int default 0;
+    declare sname varchar(50);
+
+    declare c1 cursor for 
+        select name from students where course = courseName;
+
+    declare continue handler for not found set done = 1;
+
+    open c1;
+    stu_loop: loop
+        fetch c1 into sname;
+        if done = 1 then
+            leave stu_loop;
+        end if;
+        select sname;
+    end loop;
+    close c1;
+end //
+delimiter ;
+
+
+
+delimiter //
+drop procedure if exists totalMarks //
+create procedure totalMarks(OUT total int)
+begin
+    declare done int default 0;
+    declare Smar int;
+    set total = 0;
+    declare c1 cursor for select marks from students;
+    declare continue handler for not found set done = 1;
+    open c1;
+    marks_loop: loop
+        fetch c1 into Smar;
+        if done = 1 then
+            leave marks_loop;
+        end if;
+        set total = total + Smar;
+    end loop;
+    close c1;
+end //
+delimiter ;
+call totalMarks(@sum);
+select @sum as TotalMarks;
+
+
+
+call getStudentsByCourse('Computer Science');
+
+
+delimiter //
+drop procedure if exists addSalaries //
+create procedure addSalaries(INOUT total int)
+begin
+    declare done int default 0;
+    declare sal int;
+
+    declare c1 cursor for select sal from employees;
+    declare continue handler for not found set done = 1;
+
+    open c1;
+    sal_loop: loop
+        fetch c1 into sal;
+        if done = 1 then
+            leave sal_loop;
+        end if;
+        set total = total + sal;
+    end loop;
+    close c1;
+end //
+delimiter ;
+
+set @initial = 10000;
+call addSalaries(@initial);
+select @initial as FinalTotal;
+
