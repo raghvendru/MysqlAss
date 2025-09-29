@@ -1,0 +1,20 @@
+create database transaction;
+
+use transaction;
+
+create table Student(id int primary key ,name varchar(20),course varchar(20)) engine=innodb;
+alter table student add primary key(id);
+start transaction;
+
+insert into Student() values(1,'raghavendra','dac'),(2,'akash','dbt'),(3,'pruthvi','dac') ;
+savepoint insertion;
+select * from Student;
+delete  from student where id ='1';
+savepoint deletion;
+rollback to deletion;
+select* from Student;
+insert into student() values(4,'advik','nihal');
+-- savepoint  insertion;
+rollback to insertion;
+select* from Student;
+rollback;
